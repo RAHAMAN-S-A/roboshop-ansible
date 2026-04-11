@@ -1,36 +1,38 @@
 - name: create ec2 and r53 records
-  hosts: web
-  connection: web
+  hosts: local
+  connection: local
   become: yes
 
   vars:
-    sg_id:  sg-0755205cc5ef11663
+    sg_id: sg-0755205cc5ef11663
     ami_id: ami-0220d79f3f480ecf5
     domain_name: rahaman88s.online
     env: dev
-    action: create
+    state: create
     instances:
-    - mongodb
-    - catalogue
+      - mongodb
+      - catalogue
+
   tasks:
-  - name: create ec2 instance
-    amazon.aws.ec2_instance:
-      instance_type: "t3.micro"
-      security_group: "{{ sg_id }}"
-      image_id: "{{ ami_id }}"
-      name: "{{ item }}-{{ env }}"
-      tags:
-        Project: roboshop
-        Component: "{{ item }}"
-        Environment: "{{ env }}"
-        Name: "{{ item }}-{{ env }}"
-    loop: "{{ instances }}"
-    register: ec2_output
-    when: action == "create"
+    - name: create ec2 instance
+      amazon.aws.ec2_instance:
+        instance_type: "t3.micro"
+        security_group_ids:
+          - "{{ sg_id }}"
+        image_id: "{{ ami_id }}"
+        region: us-east-1
+        name: "{{ item }}-{{ env }}"
+        tags:
+          Project: roboshop
+          Component: "{{ item }}"
+          Environment: "{{ env }}"
+          Name: "{{ item }}-{{ env }}"
+      loop: "{{ instances }}"
+      register: ec2_output
+      when: state == "create"
 
-
-  - name: print the output
-    ansible.builtin.debug:
-      msg: "{{ ec2_output }}"
-    when: action == "create"
+    - name: print the output
+      debug:
+        var: ec2_output
+      when: state == "create"
 
