@@ -3,13 +3,13 @@
   become: yes
   tasks:
   - name: install mysql
-    ansible.buildin.dnf:
+    ansible.builtin.dnf:
       name: mysql-server
       state: present
   - name: enable and restart mysql
-    ansible.buildin.service:
+    ansible.builtin.service:
        state: restart
        enable: yes
   - name: set a password
-    ansible.buildin.command: mysql_secure_installation --set-root-pass RoboShop@1 
+    ansible.builtin.command: mysql_secure_installation --set-root-pass RoboShop@1 
 
