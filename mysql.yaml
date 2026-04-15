@@ -1,5 +1,5 @@
 - name: configure mysql server
-  hosts: mysql
+  hosts: local
   become: yes
   tasks:
   - name: install MySQL server
@@ -12,11 +12,6 @@
       name: mysqld
       state: restarted
       enabled: yes
-
-  - name: install pymysql
-    ansible.builtin.dnf:
-      name: python3-PyMySQL
-      state: present
 
   - name: setup root password
     ansible.builtin.command: mysql_secure_installation --set-root-pass RoboShop@1
